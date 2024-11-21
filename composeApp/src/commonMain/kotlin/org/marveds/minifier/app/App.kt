@@ -9,7 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.marveds.minifier.app.theme.AppTheme
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.graphics.Color
@@ -28,7 +31,9 @@ import com.mohamedrejeb.calf.picker.FilePickerSelectionMode
 import com.mohamedrejeb.calf.picker.rememberFilePickerLauncher
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Regular
+import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.regular.*
+import compose.icons.fontawesomeicons.solid.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.suspendCancellableCoroutine
 import model.Appdata
@@ -39,6 +44,10 @@ import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.awt.SystemTray
+import java.awt.TrayIcon
+import java.awt.Toolkit
+import java.awt.AWTException
 
 object AppState {
     private val _watchStatus = MutableStateFlow(false)
@@ -67,9 +76,9 @@ object AppState {
 internal fun App() = AppTheme {
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.safeDrawing)
-            .padding(16.dp),
+            .fillMaxSize(),
+//            .windowInsetsPadding(WindowInsets.safeDrawing)
+//            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         MinifierApp()
@@ -161,21 +170,61 @@ fun MinifierApp() {
                 modifier = Modifier
                     .width(sidebarWidth)
                     .fillMaxHeight()
-                    .background(Color.LightGray.copy(alpha = sidebarAlpha))
+                    .background(Color.White)
+//                    .background(Color.LightGray.copy(alpha = sidebarAlpha))
                     .padding(16.dp)
             ) {
-                Button(onClick = {
-                    showFolderSelection = true
-                    AppState.showLogs(!showFolderSelection)
-                }, modifier = Modifier.fillMaxWidth(), contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)) {
-                    Text("Folder Selection")
+                TextButton(onClick = {
+                        showSettings = false
+                        showFolderSelection = true
+                        AppState.showLogs(!showFolderSelection)
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                ){
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        Text(
+                            text = "Folder Selection",
+                            color = Color.Black
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Button(onClick = {
-                    showFolderSelection = false
-                    AppState.showLogs(!showFolderSelection)
-                }, modifier = Modifier.fillMaxWidth()) {
-                    Text("View Logs")
+                TextButton(onClick = {
+                        showSettings = false
+                        showFolderSelection = false
+                        AppState.showLogs(!showFolderSelection)
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        Text(
+                            text = "View Logs",
+                            color = Color.Black
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                TextButton(onClick = {
+                        showSettings = true
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        Text(
+                            text = "Settings",
+                            color = Color.Black
+                        )
+                    }
                 }
             }
         }
@@ -193,7 +242,11 @@ fun MinifierApp() {
                 modifier = Modifier.padding(bottom = 16.dp)
             ) {
                 IconButton(onClick = { isSidebarVisible = !isSidebarVisible }) {
-                    Icon(Icons.Default.Menu, modifier = Modifier.padding(8.dp), contentDescription = "Menu Icon")
+                    Icon(FontAwesomeIcons.Solid.Bars,
+                        modifier = Modifier.padding(8.dp),
+                        contentDescription = "Menu Icon",
+                        tint = Color.Gray
+                    )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("|")
@@ -210,12 +263,19 @@ fun MinifierApp() {
                     }
                 ) {
                     Icon(
-                        imageVector = if (watchStatus) FontAwesomeIcons.Regular.Eye else FontAwesomeIcons.Regular.EyeSlash,
+                        imageVector = if (watchStatus) FontAwesomeIcons.Solid.Eye else FontAwesomeIcons.Solid.EyeSlash,
                         modifier = Modifier.padding(8.dp),
-                        contentDescription = "Watch Status Icon"
+                        contentDescription = "Watch Status Icon",
+                        tint = Color.Gray
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
+                IconButton(onClick = {
+                    clearData = true
+                }) {
+                    Icon(FontAwesomeIcons.Solid.Trash, modifier = Modifier.padding(8.dp), contentDescription = "Clear Data Button", tint = Color.Gray)
+                }
+                Spacer(modifier = Modifier.width(8.dp))
                 IconButton(onClick = {showSettings = !showSettings}) {
                     Icon(
                         Icons.Default.Settings,
@@ -225,6 +285,12 @@ fun MinifierApp() {
                     )
                 }
             }
+
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                thickness = 2.dp,
+                color = Color.Gray.copy(alpha = 0.8f)
+            )
 
             if (showSettings){
                 SettingsScreen(
@@ -271,37 +337,42 @@ fun MinifierApp() {
                                 }
                             }
                         ) {
-                            Icon(FontAwesomeIcons.Regular.Keyboard, modifier = Modifier.padding(8.dp), contentDescription = "Add Folder Button")
+                            Icon(FontAwesomeIcons.Solid.Keyboard, modifier = Modifier.padding(8.dp), contentDescription = "Add Folder Button", tint = Color.Gray)
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         IconButton(onClick = { pickerLauncher.launch() }) {
-                            Icon(FontAwesomeIcons.Regular.FolderOpen, modifier = Modifier.padding(8.dp), contentDescription = "Select Folder Button")
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        IconButton(onClick = {
-                            clearData = true
-                        }) {
-                            Icon(FontAwesomeIcons.Regular.TrashAlt, modifier = Modifier.padding(8.dp), contentDescription = "Clear Paths Button")
+                            Icon(FontAwesomeIcons.Solid.FolderOpen, modifier = Modifier.padding(8.dp), contentDescription = "Select Folder Button", tint = Color.Gray)
                         }
                     }
-                    ShowSelectedFolders(
-                        selectedFolderPaths,
-                        onRemoveFolder = { folderPath ->
-                            selectedFolderPaths = selectedFolderPaths.filter { it != folderPath }
-                            if (selectedFolderPaths.isEmpty()){
-                                clearData = true
-                            } else {
-                                scope.launch {
-                                    saveFolderList(selectedFolderPaths) {}
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                            .heightIn(max = 400.dp)
+                            .verticalScroll(rememberScrollState())
+                            .border(width = 1.dp, color = Color.Gray, shape = RoundedCornerShape(5.dp))
+                    ) {
+                        ShowSelectedFolders(
+                            selectedFolderPaths,
+                            onRemoveFolder = { folderPath ->
+                                selectedFolderPaths = selectedFolderPaths.filter { it != folderPath }
+                                if (selectedFolderPaths.isEmpty()){
+                                    clearData = true
+                                } else {
+                                    scope.launch {
+                                        saveFolderList(selectedFolderPaths) {}
+                                    }
                                 }
                             }
-                        }
-                    )
+                        )
+                    }
                 } else {
                     UpdateLog(
                         logs,
                         onClearlogsClicked = {
                             logs = ""
+                            sendDesktopNotification("Logs Cleared", "Info logs have been cleared.")
                         },
                     )
                 }
@@ -319,6 +390,7 @@ fun MinifierApp() {
             clearSelectedFolders()
             clearData = false
             AppState.clearLogs(false)
+            sendDesktopNotification("Data Cleared","All Saved data Cleared")
         }
     }
 
@@ -419,6 +491,7 @@ fun SettingsScreen(saveData: (String) -> Unit) {
         ) {
             Button(onClick = {
                 saveData(nodePath)
+                sendDesktopNotification("Settings Saved","Settings saved successfully")
             }, modifier = Modifier.fillMaxWidth()) {
                 Text("Save Settings")
             }
@@ -502,7 +575,7 @@ fun ShowSelectedFolders(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp)
+//                    .padding(bottom = 4.dp)
             ) {
                 IconButton(onClick = { onRemoveFolder(path) }) {
                     Icon(
@@ -558,12 +631,29 @@ fun isNodeInstalled(): Boolean {
             println("Node.js is installed: $output")
             true
         } else {
-            println("Node.js is not installed.")
+            sendDesktopNotification("Node Installation","Node.js is not installed.\nPlease install and add path to settings.")
             false
         }
     } catch (e: Exception) {
         println("Error checking Node.js installation: ${e.message}")
         false
+    }
+}
+
+fun sendDesktopNotification(title: String, message: String) {
+    if (SystemTray.isSupported()) {
+        val tray = SystemTray.getSystemTray()
+        val image = Toolkit.getDefaultToolkit().createImage("icon.png")
+        val trayIcon = TrayIcon(image, "Minifier-App")
+
+        try {
+            tray.add(trayIcon)
+            trayIcon.displayMessage(title, message, TrayIcon.MessageType.INFO)
+        } catch (e: AWTException) {
+            e.printStackTrace()
+        }
+    } else {
+        println("System tray not supported.")
     }
 }
 

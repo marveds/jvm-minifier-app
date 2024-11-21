@@ -8,6 +8,8 @@ import java.awt.Dimension
 import org.marveds.minifier.app.App
 import androidx.compose.ui.window.Tray
 import androidx.compose.runtime.*
+import androidx.compose.ui.window.Notification
+import androidx.compose.ui.window.rememberTrayState
 import minifierapp.composeapp.generated.resources.Res
 import minifierapp.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
@@ -21,6 +23,7 @@ fun main() = application {
     var isWatching by remember { mutableStateOf(true) }
     var showAlert by remember { mutableStateOf(true) }
     val scope = CoroutineScope(Dispatchers.Default)
+//    val trayState = rememberTrayState()
 
     scope.launch {
         // Collect changes from AppState.watchStatus
@@ -41,6 +44,7 @@ fun main() = application {
     })
 
     Tray(
+//        state = trayState,
         icon = painterResource(Res.drawable.app_icon),
         menu = {
             Item("Show Dashboard", onClick = { isAppVisible = true })
@@ -95,16 +99,24 @@ fun main() = application {
             }
             Separator()
             Item("Exit", onClick = { exitApplication() })
+//            Item("Notify", onClick = {
+//                trayState.sendNotification(
+//                    Notification(
+//                        title = "Test Notification",
+//                        message = "This is a test notification"
+//                    )
+//                )
+//            })
         }
     )
 
     if (isAppVisible) {
         Window(
             title = "MinifierApp",
-            state = rememberWindowState(width = 800.dp, height = 600.dp),
+            state = rememberWindowState(width = 1000.dp, height = 600.dp),
             onCloseRequest = ::exitApplication,
         ) {
-            window.minimumSize = Dimension(350, 600)
+            window.minimumSize = Dimension(800, 600)
             App()
         }
     }

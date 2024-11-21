@@ -125,13 +125,13 @@ compose.desktop {
             packageVersion = "1.0.0"
 
             linux {
-                iconFile.set(project.file("desktopAppIcons/LinuxIcon.png"))
+                iconFile.set(project.file("desktopAppIcons/LinuxAppIcon.png"))
             }
             windows {
-                iconFile.set(project.file("desktopAppIcons/WindowsIcon.ico"))
+                iconFile.set(project.file("desktopAppIcons/WindowsAppIcon.ico"))
             }
             macOS {
-                iconFile.set(project.file("desktopAppIcons/MacosIcon.icns"))
+                iconFile.set(project.file("desktopAppIcons/MacosAppIcon.icns"))
                 bundleID = "org.marveds.minifier.app.desktopApp"
             }
         }
