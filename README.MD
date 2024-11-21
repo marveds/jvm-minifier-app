@@ -22,7 +22,7 @@ MinifierApp is a desktop tool designed to watch specified folders for JavaScript
 
    ```bash
    git clone https://github.com/marveds/jvm-minifier-app.git
-   cd MinifierApp
+   cd <MinifierApp folder>
    ```
 
 2. Build the project using Gradle:
