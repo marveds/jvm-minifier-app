@@ -1,0 +1,429 @@
+/*!
+ * Stylus
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - @block
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Arguments
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - BinOp
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Block
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Boolean
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - CSS to Stylus conversion
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Call
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Charset
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Comment
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Compiler
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Each
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Evaluator
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Evaluator - built-in functions
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Expression
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Extend
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Feature
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Function
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Group
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - HSLA
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Ident
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - If
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Import
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Keyframes
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Lexer
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Literal
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Media
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Member
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Namespace
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Node
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Normalizer
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Null
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Object
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Params
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Parser
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Property
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Query
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - QueryList
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - RGBA
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Renderer
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Return
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Root
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Selector
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Selector Parser
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - SourceMapper
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Stack
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - String
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Ternary
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Token
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - UnaryOp
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Unit
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - Visitor
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - at-rule
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - colors
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - errors
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - middleware
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - nodes
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - plugin - url
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - stack - Frame
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - stack - Scope
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - supports
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - units
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * Stylus - utils
+ * Copyright (c) Automattic <developer.wordpress.com>
+ * MIT Licensed
+ */
+
+/*!
+ * regjsgen 0.8.0
+ * Copyright 2014-2023 Benjamin Tan <https://ofcr.se/>
+ * Available under the MIT license <https://github.com/bnjmnt4n/regjsgen/blob/main/LICENSE-MIT.txt>
+ */
+
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation. All rights reserved.
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at http://www.apache.org/licenses/LICENSE-2.0
+
+THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
+WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+MERCHANTABLITY OR NON-INFRINGEMENT.
+
+See the Apache Version 2.0 License for specific language governing permissions
+and limitations under the License.
+***************************************************************************** */
+
+/*! http://mths.be/fromcodepoint v0.1.0 by @mathias */
+
+/*! https://mths.be/regenerate v1.4.2 by @mathias | MIT license */
+
+/**
+ * @license
+ * MIT License
+ * 
+ * Copyright (c) 2014-present, Lee Byron and other contributors.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+// 								comments: /@license|@preserve|^!/, // Preserve license comments

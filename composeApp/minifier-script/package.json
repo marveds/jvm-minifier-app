@@ -1,0 +1,53 @@
+{
+  "name": "minifier-script",
+  "version": "1.0.0",
+  "description": "Script to minify JavaScript/CSS files.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "pkg": {
+    "assets": [
+      "node_modules/@swc/core/**/*.node",
+      "node_modules/esbuild/**/*",
+      "node_modules/esbuild/**/*",
+      "node_modules/@babel/preset-env/**/*"
+    ]
+  },
+  "dependencies": {
+    "@babel/core": "^7.25.8",
+    "@babel/preset-env": "^7.25.8",
+    "@babel/preset-typescript": "^7.25.7",
+    "@swc/core": "^1.9.1",
+    "babel-loader": "^9.2.1",
+    "chokidar": "^4.0.1",
+    "coffee-loader": "^5.0.0",
+    "coffee-script": "^1.12.7",
+    "css-loader": "^7.1.2",
+    "css-minimizer-webpack-plugin": "^7.0.0",
+    "esbuild": "^0.24.0",
+    "less": "^4.2.0",
+    "less-loader": "^12.2.0",
+    "mini-css-extract-plugin": "^2.9.1",
+    "path-browserify": "^1.0.1",
+    "sass": "^1.79.6",
+    "sass-loader": "^16.0.2",
+    "style-loader": "^4.0.0",
+    "stylus": "^0.63.0",
+    "stylus-loader": "^8.1.1",
+    "terser-webpack-plugin": "^5.3.10",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.6.3",
+    "uglify-js": "^3.19.3",
+    "webpack": "^5.95.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-remove-empty-scripts": "^1.0.4"
+  },
+  "author": "Marveds",
+  "license": "MIT",
+  "devDependencies": {
+    "@vercel/ncc": "^0.38.2",
+    "file-loader": "^6.2.0",
+    "webpack-node-externals": "^3.0.0"
+  }
+}
