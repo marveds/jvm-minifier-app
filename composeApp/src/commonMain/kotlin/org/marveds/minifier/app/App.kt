@@ -100,6 +100,8 @@ fun MinifierApp() {
     var folderPaths by remember { mutableStateOf(TextFieldValue()) }
     var selectedFolderPaths by remember { mutableStateOf<List<String>>(emptyList()) }
     var showSettings by remember { mutableStateOf(false) }
+    var settingsUpdated by remember { mutableStateOf(false) }
+    var allowInput by remember { mutableStateOf(false) }
     var logs by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
     val context = LocalPlatformContext.current
@@ -111,22 +113,27 @@ fun MinifierApp() {
             scope.launch {
                 val newlySelectedPaths = folders.mapNotNull { it.getPath(context) }
                 val combinedPaths = (selectedFolderPaths + newlySelectedPaths).distinct()
-                selectedFolderPaths = combinedPaths
-                saveFolderList(selectedFolderPaths){
-                    isListEmpty = true
-                    AppState.setWatchStatus(true)
-                    scope.launch {
-                        val currentData: Appdata = loadAppData()
-                        val updatedData = currentData.copy(isWatching = AppState.watchStatus.value)
-                        saveAppData(updatedData)
+                if (combinedPaths.isNotEmpty()){
+                    selectedFolderPaths = combinedPaths
+                    saveFolderList(selectedFolderPaths){
+                        isListEmpty = true
+//                        AppState.setWatchStatus(true)
+                        scope.launch {
+                            val currentData: Appdata = loadAppData()
+                            val updatedData = currentData.copy(isWatching = AppState.watchStatus.value)
+                            saveAppData(updatedData)
+                        }
                     }
                 }
             }
         }
     )
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(Unit, settingsUpdated) {
         if (!isNodeInstalled()) {
+            isFolderListEmpty = false
+            allowInput = false
+            isListEmpty = false
             logs+= "Node.js is not installed. Please download and install it from https://nodejs.org/\n"
         } else {
             logs+= "Node.js is available. Proceeding with the application.\n"
@@ -134,6 +141,7 @@ fun MinifierApp() {
             selectedFolderPaths = appData.folders
             isListEmpty = appData.folders.isNotEmpty()
             AppState.setWatchStatus(appData.isWatching)
+            allowInput = true
 
             scope.launch {
                 AppState.watchStatus.collect { isWatchingObs ->
@@ -298,7 +306,8 @@ fun MinifierApp() {
                         val currentData: Appdata = loadAppData()
                         val updatedData = currentData.copy(nodePath = it)
                         saveAppData(updatedData)
-                    }
+                    },
+                    onSaveSettings = { settingsUpdated = !settingsUpdated }
                 )
             }else{
                 if (showFolderSelection) {
@@ -309,6 +318,7 @@ fun MinifierApp() {
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
                     BasicTextField(
+                        enabled = allowInput,
                         value = folderPaths,
                         onValueChange = {
                             folderPaths = it
@@ -340,7 +350,10 @@ fun MinifierApp() {
                             Icon(FontAwesomeIcons.Solid.Keyboard, modifier = Modifier.padding(8.dp), contentDescription = "Add Folder Button", tint = Color.Gray)
                         }
                         Spacer(modifier = Modifier.width(8.dp))
-                        IconButton(onClick = { pickerLauncher.launch() }) {
+                        IconButton(
+                            enabled = allowInput,
+                            onClick = { pickerLauncher.launch() }
+                        ) {
                             Icon(FontAwesomeIcons.Solid.FolderOpen, modifier = Modifier.padding(8.dp), contentDescription = "Select Folder Button", tint = Color.Gray)
                         }
                     }
@@ -440,7 +453,10 @@ fun MinifierApp() {
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SettingsScreen(saveData: (String) -> Unit) {
+fun SettingsScreen(
+    saveData: (String) -> Unit,
+    onSaveSettings: () -> Unit,
+) {
     var nodePath by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit){
@@ -492,6 +508,7 @@ fun SettingsScreen(saveData: (String) -> Unit) {
             Button(onClick = {
                 saveData(nodePath)
                 sendDesktopNotification("Settings Saved","Settings saved successfully")
+                onSaveSettings()
             }, modifier = Modifier.fillMaxWidth()) {
                 Text("Save Settings")
             }

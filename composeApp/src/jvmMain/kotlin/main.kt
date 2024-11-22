@@ -115,6 +115,7 @@ fun main() = application {
             title = "MinifierApp",
             state = rememberWindowState(width = 1000.dp, height = 600.dp),
             onCloseRequest = ::exitApplication,
+            icon = painterResource(Res.drawable.app_icon),
         ) {
             window.minimumSize = Dimension(800, 600)
             App()
