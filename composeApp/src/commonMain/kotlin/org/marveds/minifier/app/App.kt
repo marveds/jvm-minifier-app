@@ -48,6 +48,9 @@ import java.awt.SystemTray
 import java.awt.TrayIcon
 import java.awt.Toolkit
 import java.awt.AWTException
+import javax.swing.*
+import java.awt.*
+import java.net.URI
 
 object AppState {
     private val _watchStatus = MutableStateFlow(false)
@@ -134,7 +137,35 @@ fun MinifierApp() {
             isFolderListEmpty = false
             allowInput = false
             isListEmpty = false
-            logs+= "Node.js is not installed. Please download and install it from https://nodejs.org/\n"
+            logs+= "Node.js is not installed or could not be found.\nIf it already installed please add path to settings.\nIf not installed please download and install from https://nodejs.org/. \nThen add path to settings."
+            showFolderSelection = false
+            SwingUtilities.invokeLater {
+                val frame = JFrame("Node.js Installation")
+                frame.layout = FlowLayout()
+
+                val message = """
+                    Node.js is not installed or could not be found.<br>
+                    If it is already installed, please add the path to settings.<br>
+                    If not installed, please download and install from: 
+                    <a href="https://nodejs.org/">https://nodejs.org/</a>
+                    <br>Then add path to settings.
+                """.trimIndent()
+
+                val label = JLabel("<html>$message</html>")
+                label.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
+                label.addMouseListener(object : java.awt.event.MouseAdapter() {
+                    override fun mouseClicked(e: java.awt.event.MouseEvent?) {
+                        if (Desktop.isDesktopSupported()) {
+                            Desktop.getDesktop().browse(URI("https://nodejs.org/"))
+                        }
+                    }
+                })
+
+                frame.add(label)
+                frame.setSize(600, 200)
+                frame.isAlwaysOnTop = true
+                frame.isVisible = true
+            }
         } else {
             logs+= "Node.js is available. Proceeding with the application.\n"
             val appData: Appdata = loadAppData()
