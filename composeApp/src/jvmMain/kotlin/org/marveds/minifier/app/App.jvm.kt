@@ -144,11 +144,18 @@ actual fun saveAppData(appdata: Appdata) {
     file.writeText(updatedJsonString)
 }
 
+@OptIn(DelicateCoroutinesApi::class)
 actual fun clearSelectedFolders() {
     try {
         if (Files.exists(minifierDataPath)) {
-            Files.delete(minifierDataPath)
-            println("Successfully deleted the minifier data file: $minifierDataPath")
+            GlobalScope.launch {
+                val currentData: Appdata = loadAppData()
+                val newData = currentData.copy(folders = emptyList())
+                saveAppData(newData)
+                println("Successfully cleared paths from data file: $minifierDataPath")
+            }
+//            Files.delete(minifierDataPath)
+//            println("Successfully deleted the minifier data file: $minifierDataPath")
         } else {
             println("No minifier data file found at: $minifierDataPath")
         }

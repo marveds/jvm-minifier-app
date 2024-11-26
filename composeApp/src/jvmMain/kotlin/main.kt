@@ -17,12 +17,17 @@ import org.marveds.minifier.app.stopWatchingFolders
 import java.awt.SystemTray
 import kotlinx.coroutines.*
 import org.marveds.minifier.app.AppState
+import java.awt.Frame
+import java.awt.Window
 
 fun main() = application {
     var isAppVisible by remember { mutableStateOf(true) }
     var isWatching by remember { mutableStateOf(true) }
     var showAlert by remember { mutableStateOf(true) }
     val scope = CoroutineScope(Dispatchers.Default)
+    val isMacOS = System.getProperty("os.name").contains("mac", ignoreCase = true)
+    var awtWindow: Window? = null
+
 //    val trayState = rememberTrayState()
 
     scope.launch {
@@ -47,10 +52,27 @@ fun main() = application {
 //        state = trayState,
         icon = painterResource(Res.drawable.app_icon),
         menu = {
-            Item("Show Dashboard", onClick = { isAppVisible = true })
-            Item("Hide", onClick = { isAppVisible = false })
+            Item("Show Dashboard", onClick = {
+                if (isMacOS) {
+                    (awtWindow as? Frame)?.extendedState = Frame.NORMAL
+                } else {
+                    isAppVisible = true
+                }
+            })
+            Item("Hide", onClick = {
+                if (isMacOS) {
+                    (awtWindow as? Frame)?.extendedState = Frame.ICONIFIED
+                } else {
+                    isAppVisible = false
+                }
+            })
             Separator()
-            Item("View Logs", onClick = { AppState.showLogs(true) })
+            Item("View Logs", onClick = {
+                if (isMacOS) {
+                    (awtWindow as? Frame)?.extendedState = Frame.NORMAL
+                }
+                AppState.showLogs(true)
+            })
             Item("Clear Paths", onClick = { AppState.clearLogs(true) })
             Separator()
             Menu("Watch") {
@@ -114,10 +136,19 @@ fun main() = application {
         Window(
             title = "MinifierApp",
             state = rememberWindowState(width = 1000.dp, height = 600.dp),
-            onCloseRequest = ::exitApplication,
+            onCloseRequest = {
+                if (isMacOS) {
+                    (awtWindow as? Frame)?.extendedState = Frame.ICONIFIED
+                } else {
+                    exitApplication()
+                }
+            },
             icon = painterResource(Res.drawable.app_icon),
         ) {
-            window.minimumSize = Dimension(800, 600)
+            LaunchedEffect(Unit) {
+                awtWindow = window
+                window.minimumSize = Dimension(800, 600)
+            }
             App()
         }
     }
