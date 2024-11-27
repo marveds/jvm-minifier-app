@@ -133,7 +133,8 @@ actual fun loadAppData(): Appdata {
             userDataDir.mkdirs()
         }
         val defaultAppData = Appdata()
-        saveAppData(defaultAppData)
+        val appData = defaultAppData.copy(allowNotify = true )
+        saveAppData(appData)
         return defaultAppData
     }
 }

@@ -62,7 +62,7 @@ object AppState {
     private val _clearLogs = MutableStateFlow(false)
     val clearLogs: StateFlow<Boolean> = _clearLogs
 
-    private val _allowNotification = MutableStateFlow(false)
+    private val _allowNotification = MutableStateFlow(true)
     val allowNotification: StateFlow<Boolean> = _allowNotification
 
     fun setWatchStatus(value: Boolean) {
