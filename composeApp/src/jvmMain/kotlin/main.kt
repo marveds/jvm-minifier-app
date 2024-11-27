@@ -8,8 +8,8 @@ import java.awt.Dimension
 import org.marveds.minifier.app.App
 import androidx.compose.ui.window.Tray
 import androidx.compose.runtime.*
-import androidx.compose.ui.window.Notification
-import androidx.compose.ui.window.rememberTrayState
+//import androidx.compose.ui.window.Notification
+//import androidx.compose.ui.window.rememberTrayState
 import minifierapp.composeapp.generated.resources.Res
 import minifierapp.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
@@ -34,71 +34,68 @@ fun main() = application {
         }
     }
 
-    if (!SystemTray.isSupported()) {
-        println("System tray is not supported")
-        return@application
-    }
-
     Runtime.getRuntime().addShutdownHook(Thread {
         stopWatchingFolders(){}
     })
 
-    Tray(
-//        state = trayState,
-        icon = painterResource(Res.drawable.app_icon),
-        menu = {
-            Item("Show Dashboard", onClick = { isAppVisible = true })
-            Item("Hide", onClick = { isAppVisible = false })
-            Separator()
-            Item("View Logs", onClick = { AppState.showLogs(true) })
-            Item("Clear Paths", onClick = { AppState.clearLogs(true) })
-            Separator()
-            Menu("Watch") {
-                CheckboxItem(
-                    "Start",
-                    checked = isWatching,
-                    enabled = !isWatching,
-                    onCheckedChange = {
-                        isWatching = true
-                        // Start watching logic
-                        val newStatus = !AppState.watchStatus.value
-                        AppState.setWatchStatus(newStatus)
-                    }
-                )
-                CheckboxItem(
-                    "Stop",
-                    checked = !isWatching,
-                    enabled = isWatching,
-                    onCheckedChange = {
-                        isWatching = false
-                        // Stop watching logic
-                        val newStatus = !AppState.watchStatus.value
-                        AppState.setWatchStatus(newStatus)
-                    }
-                )
-            }
-            Menu("Notification") {
-                CheckboxItem(
-                    "On",
-                    checked = showAlert,
-                    enabled = !showAlert,
-                    onCheckedChange = {
-                        showAlert = true
-                        // Start watching logic
-                    }
-                )
-                CheckboxItem(
-                    "Off",
-                    checked = !showAlert,
-                    enabled = showAlert,
-                    onCheckedChange = {
-                        showAlert = false
-                        // Stop watching logic
-                    }
-                )
-            }
-            Separator()
-            Item("Exit", onClick = { exitApplication() })
+//    if (SystemTray.isSupported()) {
+    if (SystemTray.isSupported()) {
+        Tray(
+//            state = trayState,
+            icon = painterResource(Res.drawable.app_icon),
+            menu = {
+                Item("Show Dashboard", onClick = { isAppVisible = true })
+                Item("Hide", onClick = { isAppVisible = false })
+                Separator()
+                Item("View Logs", onClick = { AppState.showLogs(true) })
+                Item("Clear Paths", onClick = { AppState.clearLogs(true) })
+                Separator()
+                Menu("Watch") {
+                    CheckboxItem(
+                        "Start",
+                        checked = isWatching,
+                        enabled = !isWatching,
+                        onCheckedChange = {
+                            isWatching = true
+                            // Start watching logic
+                            val newStatus = !AppState.watchStatus.value
+                            AppState.setWatchStatus(newStatus)
+                        }
+                    )
+                    CheckboxItem(
+                        "Stop",
+                        checked = !isWatching,
+                        enabled = isWatching,
+                        onCheckedChange = {
+                            isWatching = false
+                            // Stop watching logic
+                            val newStatus = !AppState.watchStatus.value
+                            AppState.setWatchStatus(newStatus)
+                        }
+                    )
+                }
+                Menu("Notification") {
+                    CheckboxItem(
+                        "On",
+                        checked = showAlert,
+                        enabled = !showAlert,
+                        onCheckedChange = {
+                            showAlert = true
+                            // Start watching logic
+                        }
+                    )
+                    CheckboxItem(
+                        "Off",
+                        checked = !showAlert,
+                        enabled = showAlert,
+                        onCheckedChange = {
+                            showAlert = false
+                            // Stop watching logic
+                        }
+                    )
+                }
+                Separator()
+                Item("Exit", onClick = { exitApplication() })
 //            Item("Notify", onClick = {
 //                trayState.sendNotification(
 //                    Notification(
@@ -107,8 +104,11 @@ fun main() = application {
 //                    )
 //                )
 //            })
-        }
-    )
+            }
+        )
+    } else {
+        println("System tray is not supported")
+    }
 
     if (isAppVisible) {
         Window(

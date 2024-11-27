@@ -137,3 +137,12 @@ compose.desktop {
         }
     }
 }
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains.kotlinx" && requested.name == "kotlinx-coroutines-core") {
+            useVersion("1.9.0")
+        }
+    }
+}
+

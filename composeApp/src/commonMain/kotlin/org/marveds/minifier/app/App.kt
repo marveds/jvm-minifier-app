@@ -48,6 +48,10 @@ import java.awt.SystemTray
 import java.awt.TrayIcon
 import java.awt.Toolkit
 import java.awt.AWTException
+import javax.swing.JFileChooser
+import javax.swing.*
+import java.awt.*
+import java.net.URI
 
 object AppState {
     private val _watchStatus = MutableStateFlow(false)
@@ -59,6 +63,9 @@ object AppState {
     private val _clearLogs = MutableStateFlow(false)
     val clearLogs: StateFlow<Boolean> = _clearLogs
 
+    private val _allowNotification = MutableStateFlow(true)
+    val allowNotification: StateFlow<Boolean> = _allowNotification
+
     fun setWatchStatus(value: Boolean) {
         _watchStatus.value = value
     }
@@ -69,6 +76,10 @@ object AppState {
 
     fun clearLogs(value: Boolean) {
         _clearLogs.value = value
+    }
+
+    fun setNotification(value: Boolean) {
+        _allowNotification.value = value
     }
 }
 
@@ -106,41 +117,71 @@ fun MinifierApp() {
     val scope = rememberCoroutineScope()
     val context = LocalPlatformContext.current
 
-    val pickerLauncher = rememberFilePickerLauncher(
-        type = FilePickerFileType.Folder,
-        selectionMode = FilePickerSelectionMode.Multiple,
-        onResult = { folders ->
-            scope.launch {
-                val newlySelectedPaths = folders.mapNotNull { it.getPath(context) }
-                val combinedPaths = (selectedFolderPaths + newlySelectedPaths).distinct()
-                if (combinedPaths.isNotEmpty()){
-                    selectedFolderPaths = combinedPaths
-                    saveFolderList(selectedFolderPaths){
-                        isListEmpty = true
-//                        AppState.setWatchStatus(true)
-                        scope.launch {
-                            val currentData: Appdata = loadAppData()
-                            val updatedData = currentData.copy(isWatching = AppState.watchStatus.value)
-                            saveAppData(updatedData)
-                        }
-                    }
-                }
-            }
-        }
-    )
+
+//    val pickerLauncher = rememberFilePickerLauncher(
+//        type = FilePickerFileType.Folder,
+//        selectionMode = FilePickerSelectionMode.Multiple,
+//        onResult = { folders ->
+//            scope.launch {
+//                val newlySelectedPaths = folders.mapNotNull { it.getPath(context) }
+//                val combinedPaths = (selectedFolderPaths + newlySelectedPaths).distinct()
+//                if (combinedPaths.isNotEmpty()){
+//                    selectedFolderPaths = combinedPaths
+//                    saveFolderList(selectedFolderPaths){
+//                        isListEmpty = true
+////                        AppState.setWatchStatus(true)
+//                        scope.launch {
+//                            val currentData: Appdata = loadAppData()
+//                            val updatedData = currentData.copy(isWatching = AppState.watchStatus.value)
+//                            saveAppData(updatedData)
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    )
 
     LaunchedEffect(Unit, settingsUpdated) {
         if (!isNodeInstalled()) {
             isFolderListEmpty = false
             allowInput = false
             isListEmpty = false
-            logs+= "Node.js is not installed. Please download and install it from https://nodejs.org/\n"
+            logs+= "Node.js is not installed or could not be found.\nIf it already installed please add path to settings.\nIf not installed please download and install from https://nodejs.org/. \nThen add path to settings."
+            showFolderSelection = false
+            SwingUtilities.invokeLater {
+                val frame = JFrame("Node.js Installation")
+                frame.layout = FlowLayout()
+
+                val message = """
+                    Node.js is not installed or could not be found.<br>
+                    If it is already installed, please add the path to settings.<br>
+                    If not installed, please download and install from: 
+                    <a href="https://nodejs.org/">https://nodejs.org/</a>
+                    <br>Then add path to settings.
+                """.trimIndent()
+
+                val label = JLabel("<html>$message</html>")
+                label.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
+                label.addMouseListener(object : java.awt.event.MouseAdapter() {
+                    override fun mouseClicked(e: java.awt.event.MouseEvent?) {
+                        if (Desktop.isDesktopSupported()) {
+                            Desktop.getDesktop().browse(URI("https://nodejs.org/"))
+                        }
+                    }
+                })
+
+                frame.add(label)
+                frame.setSize(600, 200)
+                frame.isAlwaysOnTop = true
+                frame.isVisible = true
+            }
         } else {
             logs+= "Node.js is available. Proceeding with the application.\n"
             val appData: Appdata = loadAppData()
             selectedFolderPaths = appData.folders
             isListEmpty = appData.folders.isNotEmpty()
             AppState.setWatchStatus(appData.isWatching)
+            AppState.setNotification(appData.allowNotify)
             allowInput = true
 
             scope.launch {
@@ -168,8 +209,20 @@ fun MinifierApp() {
                     }
                 }
             }
+
+            scope.launch {
+                AppState.allowNotification.collect { allowNotificationObs ->
+                    withContext(Dispatchers.Main) {
+                        val currentData: Appdata = loadAppData()
+                        val updatedData = currentData.copy(allowNotify = allowNotificationObs)
+                        saveAppData(updatedData)
+                    }
+                }
+            }
         }
     }
+
+
 
     Row(modifier = Modifier.fillMaxSize()) {
         // Sidebar
@@ -183,10 +236,10 @@ fun MinifierApp() {
                     .padding(16.dp)
             ) {
                 TextButton(onClick = {
-                        showSettings = false
-                        showFolderSelection = true
-                        AppState.showLogs(!showFolderSelection)
-                    },
+                    showSettings = false
+                    showFolderSelection = true
+                    AppState.showLogs(!showFolderSelection)
+                },
                     modifier = Modifier.fillMaxWidth(),
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
                 ){
@@ -202,10 +255,10 @@ fun MinifierApp() {
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 TextButton(onClick = {
-                        showSettings = false
-                        showFolderSelection = false
-                        AppState.showLogs(!showFolderSelection)
-                    },
+                    showSettings = false
+                    showFolderSelection = false
+                    AppState.showLogs(!showFolderSelection)
+                },
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Box(
@@ -220,8 +273,8 @@ fun MinifierApp() {
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 TextButton(onClick = {
-                        showSettings = true
-                    },
+                    showSettings = true
+                },
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Box(
@@ -352,7 +405,29 @@ fun MinifierApp() {
                         Spacer(modifier = Modifier.width(8.dp))
                         IconButton(
                             enabled = allowInput,
-                            onClick = { pickerLauncher.launch() }
+                            onClick = {
+                                val pickerLauncher = JFileChooser()
+                                pickerLauncher.fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
+                                val result = pickerLauncher.showOpenDialog(null)
+                                if (result == JFileChooser.APPROVE_OPTION) {
+                                    val folder = pickerLauncher.selectedFile
+                                    scope.launch {
+                                        val newlySelectedPaths = folder.absolutePath
+                                        val combinedPaths = (selectedFolderPaths + newlySelectedPaths).distinct()
+                                        if (combinedPaths.isNotEmpty()){
+                                            selectedFolderPaths = combinedPaths
+                                            saveFolderList(selectedFolderPaths){
+                                                isListEmpty = true
+                                                scope.launch {
+                                                    val currentData: Appdata = loadAppData()
+                                                    val updatedData = currentData.copy(isWatching = AppState.watchStatus.value)
+                                                    saveAppData(updatedData)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         ) {
                             Icon(FontAwesomeIcons.Solid.FolderOpen, modifier = Modifier.padding(8.dp), contentDescription = "Select Folder Button", tint = Color.Gray)
                         }
@@ -658,6 +733,10 @@ fun isNodeInstalled(): Boolean {
 }
 
 fun sendDesktopNotification(title: String, message: String) {
+    if (!AppState.allowNotification.value){
+        return
+    }
+
     if (SystemTray.isSupported()) {
         val tray = SystemTray.getSystemTray()
         val image = Toolkit.getDefaultToolkit().createImage("icon.png")
@@ -687,74 +766,3 @@ expect fun clearSelectedFolders()
 expect fun startWatchingFolders(selectedPaths: List<String>, onChange: (String) -> Unit)
 
 expect fun stopWatchingFolders(onChange: (String) -> Unit)
-
-//@Composable
-//fun DefaultApp(modifier: Modifier = Modifier) {
-//    Text(
-//        text = stringResource(Res.string.cyclone),
-//        fontFamily = FontFamily(Font(Res.font.IndieFlower_Regular)),
-//        style = MaterialTheme.typography.displayLarge
-//    )
-//
-//    var isRotating by remember { mutableStateOf(false) }
-//
-//    val rotate = remember { Animatable(0f) }
-//    val target = 360f
-//    if (isRotating) {
-//        LaunchedEffect(Unit) {
-//            while (isActive) {
-//                val remaining = (target - rotate.value) / target
-//                rotate.animateTo(target, animationSpec = tween((1_000 * remaining).toInt(), easing = LinearEasing))
-//                rotate.snapTo(0f)
-//            }
-//        }
-//    }
-//
-//    Image(
-//        modifier = Modifier
-//            .size(250.dp)
-//            .padding(16.dp)
-//            .run { rotate(rotate.value) },
-//        imageVector = vectorResource(Res.drawable.ic_cyclone),
-//        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
-//        contentDescription = null
-//    )
-//
-//    ElevatedButton(
-//        modifier = Modifier
-//            .padding(horizontal = 8.dp, vertical = 4.dp)
-//            .widthIn(min = 200.dp),
-//        onClick = { isRotating = !isRotating },
-//        content = {
-//            Icon(vectorResource(Res.drawable.ic_rotate_right), contentDescription = null)
-//            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-//            Text(
-//                stringResource(if (isRotating) Res.string.stop else Res.string.run)
-//            )
-//        }
-//    )
-//
-//    var isDark by LocalThemeIsDark.current
-//    val icon = remember(isDark) {
-//        if (isDark) Res.drawable.ic_light_mode
-//        else Res.drawable.ic_dark_mode
-//    }
-//
-//    ElevatedButton(
-//        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp).widthIn(min = 200.dp),
-//        onClick = { isDark = !isDark },
-//        content = {
-//            Icon(vectorResource(icon), contentDescription = null)
-//            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-//            Text(stringResource(Res.string.theme))
-//        }
-//    )
-//
-//    val uriHandler = LocalUriHandler.current
-//    TextButton(
-//        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp).widthIn(min = 200.dp),
-//        onClick = { uriHandler.openUri("https://github.com/terrakok") },
-//    ) {
-//        Text(stringResource(Res.string.open_github))
-//    }
-//}
