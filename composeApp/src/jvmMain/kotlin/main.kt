@@ -106,7 +106,7 @@ fun main() = application {
                     enabled = !showAlert,
                     onCheckedChange = {
                         showAlert = true
-                        // Start watching logic
+                        AppState.setNotification(true)
                     }
                 )
                 CheckboxItem(
@@ -115,7 +115,7 @@ fun main() = application {
                     enabled = showAlert,
                     onCheckedChange = {
                         showAlert = false
-                        // Stop watching logic
+                        AppState.setNotification(false)
                     }
                 )
             }

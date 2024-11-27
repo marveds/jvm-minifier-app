@@ -62,6 +62,9 @@ object AppState {
     private val _clearLogs = MutableStateFlow(false)
     val clearLogs: StateFlow<Boolean> = _clearLogs
 
+    private val _allowNotification = MutableStateFlow(false)
+    val allowNotification: StateFlow<Boolean> = _allowNotification
+
     fun setWatchStatus(value: Boolean) {
         _watchStatus.value = value
     }
@@ -72,6 +75,10 @@ object AppState {
 
     fun clearLogs(value: Boolean) {
         _clearLogs.value = value
+    }
+
+    fun setNotification(value: Boolean) {
+        _allowNotification.value = value
     }
 }
 
@@ -172,6 +179,7 @@ fun MinifierApp() {
             selectedFolderPaths = appData.folders
             isListEmpty = appData.folders.isNotEmpty()
             AppState.setWatchStatus(appData.isWatching)
+            AppState.setNotification(appData.allowNotify)
             allowInput = true
 
             scope.launch {
@@ -196,6 +204,16 @@ fun MinifierApp() {
                         if(clearLogsObs){
                             clearData = true
                         }
+                    }
+                }
+            }
+
+            scope.launch {
+                AppState.allowNotification.collect { allowNotificationObs ->
+                    withContext(Dispatchers.Main) {
+                        val currentData: Appdata = loadAppData()
+                        val updatedData = currentData.copy(allowNotify = allowNotificationObs)
+                        saveAppData(updatedData)
                     }
                 }
             }
@@ -689,6 +707,10 @@ fun isNodeInstalled(): Boolean {
 }
 
 fun sendDesktopNotification(title: String, message: String) {
+    if (!AppState.allowNotification.value){
+        return
+    }
+
     if (SystemTray.isSupported()) {
         val tray = SystemTray.getSystemTray()
         val image = Toolkit.getDefaultToolkit().createImage("icon.png")
