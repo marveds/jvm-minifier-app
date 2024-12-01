@@ -133,6 +133,11 @@ compose.desktop {
             macOS {
                 iconFile.set(project.file("desktopAppIcons/MacosAppIcon.icns"))
                 bundleID = "org.marveds.minifier.app.desktopApp"
+                signing {
+                    sign.set(true)
+                    identity.set("Marvin Edwards")
+                    // keychain.set("/path/to/keychain")
+                }
             }
         }
     }
