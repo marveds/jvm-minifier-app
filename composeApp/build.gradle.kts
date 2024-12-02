@@ -3,6 +3,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.multiplatform)
@@ -115,6 +116,9 @@ dependencies {
     debugImplementation(libs.androidx.uitest.testManifest)
 }
 
+val localProperties = Properties()
+file(rootDir.absolutePath + "/local.properties").inputStream().use { localProperties.load(it) }
+
 compose.desktop {
     application {
         mainClass = "MainKt"
@@ -131,12 +135,12 @@ compose.desktop {
                 iconFile.set(project.file("desktopAppIcons/WindowsAppIcon.ico"))
             }
             macOS {
+                val providers = project.providers
                 iconFile.set(project.file("desktopAppIcons/MacosAppIcon.icns"))
                 bundleID = "org.marveds.minifier.app.desktopApp"
                 signing {
                     sign.set(true)
-                    identity.set("Marvin Edwards")
-                    // keychain.set("/path/to/keychain")
+                    identity.set(localProperties.getProperty("SIGNIN_NAME"))
                 }
             }
         }
